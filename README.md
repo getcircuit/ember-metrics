@@ -215,6 +215,7 @@ export default Route.extend({
 });
 
 ```
+[See this example with Native Classes](#native-class-usage)
 
 If you wish to only call a single service, just specify it's name as the first argument:
 
@@ -236,50 +237,30 @@ set(this, 'metrics.context.userName', 'Jimbo');
 this.metrics.trackPage({ page: 'page/1' }); // { userName: 'Jimbo', page: 'page/1' }
 ```
 
-## Octane / Native Class usage
+## Native Class usage
 
-If you are living on the edge and using an app built with the [Ember Octane Blueprint](https://github.com/ember-cli/ember-octane-blueprint) or otherwise implementing Native Class syntax in your routes, the following example can be used to report route transitions to ember-metrics:
+If you are using an app built with the [Ember Octane Blueprint](https://github.com/ember-cli/ember-octane-blueprint) or otherwise implementing Native Class syntax in your routes, the following example can be used to report route transitions to ember-metrics:
 
 ```js
 // app/routes/application.js
 import Route from '@ember/routing/route';
 import { action } from '@ember/object';
 import { inject as service } from '@ember/service';
-import { scheduleOnce } from '@ember/runloop';
 
 export default class ApplicationRoute extends Route {
   @service metrics
   @service router
 
-  @action
-  didTransition() {
-    this._super(...arguments);
-    this._trackPage();
-  }
+  constructor() {
+    super(...arguments);
 
-  _trackPage() {
-    scheduleOnce('afterRender', () => {
-      const page = this.router.currentURL;
-      const title = this.router.currentRouteName;
+    let router = this.router;
+    router.on('routeDidChange', () => {
+      const page = router.currentURL;
+      const title = router.currentRouteName || 'unknown';
 
       this.metrics.trackPage({ page, title });
-    })
-  }
-}
-```
-
-And then in your other routes you can simply add a didTransition action that returns true and thus "bubbles up" to the application route and calls _trackPage:
-
-```js
-// app/routes/home.js
-import Route from '@ember/routing/route';
-import { action } from '@ember/object';
-
-export default class HomeRoute extends Route {
-  @action
-  didTransition() {
-    this._super(...arguments);
-    return true;
+    });
   }
 }
 ```
@@ -423,6 +404,43 @@ moduleFor('route:foo', 'Unit | Route | foo', {
   ]
 });
 ```
+
+## Contributors
+
+We're grateful to these wonderful contributors who've contributed to `ember-metrics`:
+
+[//]: contributor-faces
+<a href="https://github.com/poteto"><img src="https://avatars0.githubusercontent.com/u/1390709?v=4" title="poteto" width="80" height="80"></a>
+<a href="https://github.com/kellyselden"><img src="https://avatars1.githubusercontent.com/u/602423?v=4" title="kellyselden" width="80" height="80"></a>
+<a href="https://github.com/chrismllr"><img src="https://avatars3.githubusercontent.com/u/9942917?v=4" title="chrismllr" width="80" height="80"></a>
+<a href="https://github.com/josemarluedke"><img src="https://avatars0.githubusercontent.com/u/230476?v=4" title="josemarluedke" width="80" height="80"></a>
+<a href="https://github.com/mike-north"><img src="https://avatars1.githubusercontent.com/u/558005?v=4" title="mike-north" width="80" height="80"></a>
+<a href="https://github.com/jelhan"><img src="https://avatars3.githubusercontent.com/u/4965703?v=4" title="jelhan" width="80" height="80"></a>
+<a href="https://github.com/denneralex"><img src="https://avatars1.githubusercontent.com/u/5065602?v=4" title="denneralex" width="80" height="80"></a>
+<a href="https://github.com/CvX"><img src="https://avatars1.githubusercontent.com/u/66961?v=4" title="CvX" width="80" height="80"></a>
+<a href="https://github.com/sly7-7"><img src="https://avatars1.githubusercontent.com/u/1826661?v=4" title="sly7-7" width="80" height="80"></a>
+<a href="https://github.com/tyleryasaka"><img src="https://avatars1.githubusercontent.com/u/6504519?v=4" title="tyleryasaka" width="80" height="80"></a>
+<a href="https://github.com/opsb"><img src="https://avatars2.githubusercontent.com/u/46232?v=4" title="opsb" width="80" height="80"></a>
+<a href="https://github.com/Artmann"><img src="https://avatars3.githubusercontent.com/u/91954?v=4" title="Artmann" width="80" height="80"></a>
+<a href="https://github.com/colinhoernig"><img src="https://avatars1.githubusercontent.com/u/195992?v=4" title="colinhoernig" width="80" height="80"></a>
+<a href="https://github.com/gmurphey"><img src="https://avatars3.githubusercontent.com/u/373721?v=4" title="gmurphey" width="80" height="80"></a>
+<a href="https://github.com/cibernox"><img src="https://avatars2.githubusercontent.com/u/265339?v=4" title="cibernox" width="80" height="80"></a>
+<a href="https://github.com/reidab"><img src="https://avatars2.githubusercontent.com/u/13192?v=4" title="reidab" width="80" height="80"></a>
+<a href="https://github.com/locks"><img src="https://avatars1.githubusercontent.com/u/32344?v=4" title="locks" width="80" height="80"></a>
+<a href="https://github.com/achambers"><img src="https://avatars0.githubusercontent.com/u/416724?v=4" title="achambers" width="80" height="80"></a>
+<a href="https://github.com/XrXr"><img src="https://avatars2.githubusercontent.com/u/6457510?v=4" title="XrXr" width="80" height="80"></a>
+<a href="https://github.com/alexlafroscia"><img src="https://avatars2.githubusercontent.com/u/1645881?v=4" title="alexlafroscia" width="80" height="80"></a>
+<a href="https://github.com/balinterdi"><img src="https://avatars2.githubusercontent.com/u/5022?v=4" title="balinterdi" width="80" height="80"></a>
+<a href="https://github.com/blimmer"><img src="https://avatars1.githubusercontent.com/u/630449?v=4" title="blimmer" width="80" height="80"></a>
+<a href="https://github.com/ballPointPenguin"><img src="https://avatars0.githubusercontent.com/u/35609?v=4" title="ballPointPenguin" width="80" height="80"></a>
+<a href="https://github.com/bdelaforest"><img src="https://avatars2.githubusercontent.com/u/7151559?v=4" title="bdelaforest" width="80" height="80"></a>
+<a href="https://github.com/billpull"><img src="https://avatars1.githubusercontent.com/u/854970?v=4" title="billpull" width="80" height="80"></a>
+<a href="https://github.com/noslouch"><img src="https://avatars1.githubusercontent.com/u/2090382?v=4" title="noslouch" width="80" height="80"></a>
+<a href="https://github.com/wecc"><img src="https://avatars2.githubusercontent.com/u/708205?v=4" title="wecc" width="80" height="80"></a>
+<a href="https://github.com/cigoe"><img src="https://avatars3.githubusercontent.com/u/518239?v=4" title="cigoe" width="80" height="80"></a>
+<a href="https://github.com/dcyriller"><img src="https://avatars2.githubusercontent.com/u/6677373?v=4" title="dcyriller" width="80" height="80"></a>
+
+[//]: contributor-faces
 
 ## Installation
 

@@ -23,9 +23,32 @@ export default BaseAdapter.extend({
     assert(`[ember-metrics] You must pass a valid \`appId\` to the ${this.toString()} adapter`, appId);
 
     /* eslint-disable */
-    (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update',{});}else{var d=document;var i=function(){i.c(arguments)};i.q=[];i.c=function(args){i.q.push(args)};w.Intercom=i;(function(){var s=d.createElement('script');s.type='text/javascript';s.async=true;
-    s.src=`https://widget.intercom.io/widget/${appId}`;
-    var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);})(); }})()
+    (function() {
+        var w = window;
+        var ic = w.Intercom;
+        if (typeof ic === "function") {
+            ic('reattach_activator');
+            ic('update', {});
+        } else {
+            var d = document;
+            var i = function() {
+                i.c(arguments)
+            };
+            i.q = [];
+            i.c = function(args) {
+                i.q.push(args)
+            };
+            w.Intercom = i;
+            (function() {
+                var s = d.createElement('script');
+                s.type = 'text/javascript';
+                s.async = true;
+                s.src = `https://widget.intercom.io/widget/${appId}`;
+                var x = d.getElementsByTagName('script')[0];
+                x.parentNode.insertBefore(s, x);
+            })();
+        }
+    })()
     /* eslint-enable */
   },
 
@@ -56,11 +79,20 @@ export default BaseAdapter.extend({
   },
 
   trackPage(options = {}) {
-    const event = { event: 'page viewed' };
+    const event = { event: 'pageview' };
     const mergedOptions = assign(event, options);
 
     this.trackEvent(mergedOptions);
   },
+
+
+  logout() {
+    const method = this.booted ? 'update' : 'boot';
+    window.Intercom(method, null);
+
+    window.intercom('shutdown')
+    window.intercom('boot')
+  }
 
   willDestroy() {
     removeFromDOM('script[src*="intercom"]');

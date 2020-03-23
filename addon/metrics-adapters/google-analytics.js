@@ -101,6 +101,10 @@ export default BaseAdapter.extend({
     return event;
   },
 
+  logout() {
+    window.ga('set', 'userId', null);
+  },
+
   willDestroy() {
     removeFromDOM('script[src*="google-analytics"]');
 
